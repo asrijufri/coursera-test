@@ -1,76 +1,153 @@
-# AdLink Lite Anti-Cheat (VieFaucet Integration)
+# Sistem Aduan Masyarakat DLHPKKP
+## Dinas Lingkungan Hidup, Perumahan, Kawasan Permukiman dan Pertanahan
+### Kabupaten Tojo Una-Una
 
-Script ini adalah versi sederhana mirip AdLinkFly untuk kebutuhan faucet/shortlink + smartlink task seperti Adsterra.
+Website aduan masyarakat yang modern dan dinamis untuk DLHPKKP Kabupaten Tojo Una-Una.
 
-## Fitur
+## 🚀 Fitur Utama
 
-1. **Shortlink + 2 Smartlink Task (wajib)**
-   - Admin membuat link via `create_link.php` dengan:
-     - URL tujuan akhir
-     - Task 1 smartlink URL
-     - Task 2 smartlink URL
-   - Pengunjung membuka shortlink `go.php?c=KODE&uid=USER_ID`.
-   - Pengunjung wajib menyelesaikan **2 task smartlink** (berurutan) sebelum bisa claim reward.
+### Frontend (Masyarakat)
+- **Beranda** - Dashboard dengan statistik real-time dan informasi terkini
+- **Buat Aduan Baru** - Formulir pengajuan aduan dengan upload bukti/foto
+- **Lacak Aduan** - Pelacakan status aduan menggunakan token unik
+- **Daftar Aduan** - Daftar semua aduan dengan filter dan pencarian
+- **Tentang** - Informasi tentang DLHPKKP dan sistem
 
-2. **Proteksi anti-cheat**
-   - Rate limit IP per jam.
-   - Cooldown claim per fingerprint + link.
-   - Math challenge + countdown wajib.
-   - Session token wajib valid.
-   - Fingerprint (IP + user-agent) harus sama dari awal sampai claim.
-   - Honeypot field untuk tangkap bot form filler.
-   - Validasi urutan task (task 2 tidak bisa duluan).
-   - Minimum waktu penyelesaian task (anti bypass cepat).
-   - Log abuse untuk ban/analisa manual.
+### Backend (Admin/Staff)
+- **Dashboard Admin** - Statistik dan overview aduan
+- **Manajemen Aduan** - Kelola, update status, dan beri tanggapan
+- **Manajemen User** - Kelola akun admin dan staff
+- **Manajemen Kategori** - Kelola kategori aduan
+- **Laporan** - Generate laporan aduan
 
-3. **Integrasi VieFaucet**
-   - Setelah validasi lolos, server memanggil callback VieFaucet (`POST`) dengan:
-     - `api_key`
-     - `uid`
-     - `reference`
-     - `amount`
+## 📋 Teknologi
 
-## Struktur file
+- **Backend**: PHP 7.4+ dengan PDO
+- **Database**: MySQL/MariaDB
+- **Frontend**: 
+  - Bootstrap 5.3
+  - Font Awesome 6
+  - Animate.css
+  - SweetAlert2
+  - Custom CSS dengan gradient modern
 
-- `index.php`: daftar link aktif.
-- `create_link.php`: form admin buat link.
-- `go.php`: validasi awal + tampil challenge/task.
-- `open_task.php`: membuka smartlink task (record opened_at).
-- `complete_task.php`: menandai task selesai setelah waktu minimum.
-- `claim.php`: validasi final + callback VieFaucet + redirect.
-- `src/AntiCheatService.php`: logic anti-cheat.
-- `src/ViefaucetClient.php`: HTTP client callback.
-- `db.sql`: skema database.
+## 🛠️ Instalasi
 
-## Cara install
+### 1. Persyaratan Server
+- PHP 7.4 atau lebih tinggi
+- MySQL 5.7 atau MariaDB 10.3
+- Web Server (Apache/Nginx)
+- Extension PHP: PDO, GD
 
-1. Import database:
-   ```bash
-   mysql -u root -p adlink_lite < db.sql
-   ```
-2. Copy config:
-   ```bash
-   cp config.example.php config.php
-   ```
-3. Edit `config.php` (DB, `admin_secret`, callback VieFaucet, threshold security).
-4. Jalankan server:
-   ```bash
-   php -S 0.0.0.0:8000
-   ```
-
-## Contoh integrasi di VieFaucet
-
-Pola URL shortlink:
-
-```text
-https://domain-kamu.com/go.php?c=KODE_LINK&uid={user_id}
+### 2. Setup Database
+```bash
+# Import database schema
+mysql -u root -p < database.sql
 ```
 
-`{user_id}` diganti user identifier dari VieFaucet.
+### 3. Konfigurasi
+Edit file `config.php`:
+```php
+define('DB_HOST', 'localhost');
+define('DB_NAME', 'dlhpkkp_tojo_unauna');
+define('DB_USER', 'root');
+define('DB_PASS', 'your_password');
+define('APP_URL', 'http://localhost/aduan-masyarakat/');
+```
 
-## Catatan keamanan
+### 4. Permissions
+```bash
+# Set permissions for uploads directory
+chmod 755 uploads/
+chown www-data:www-data uploads/
+```
 
-- Simpan `admin_secret` dan `api_key` di server (jangan expose frontend).
-- Wajib pakai HTTPS.
-- Untuk anti-VPN lebih akurat, pakai IP intelligence service.
-- Untuk anti-cheat yang lebih kuat, tambahkan verifikasi callback server-side dari provider smartlink jika tersedia.
+### 5. Akses Aplikasi
+- Frontend: `http://localhost/aduan-masyarakat/`
+- Admin Login: `http://localhost/aduan-masyarakat/admin/login.php`
+
+## 👤 Default Login Credentials
+
+**Admin:**
+- Username: `admin`
+- Password: `admin123`
+
+**Staff:**
+- Username: `staff1`
+- Password: `admin123`
+
+⚠️ **Penting**: Ganti password default setelah instalasi!
+
+## 📁 Struktur Direktori
+
+```
+aduan-masyarakat/
+├── assets/
+│   ├── css/
+│   │   └── style.css          # Custom styles
+│   ├── js/
+│   │   └── main.js            # JavaScript functions
+│   └── images/                # Image assets
+├── admin/                     # Admin panel
+├── includes/                  # Include files
+├── templates/
+│   └── header.php             # Template header & footer
+├── uploads/                   # Uploaded files
+├── config.php                 # Configuration
+├── database.sql              # Database schema
+├── index.php                 # Homepage
+├── submit.php                # Submit complaint
+├── track.php                 # Track complaint
+├── complaints.php            # Complaints list
+├── success.php               # Success page
+└── about.php                 # About page
+```
+
+## 🎨 Desain Features
+
+- **Modern Gradient Design** - Warna hijau gradasi yang fresh
+- **Responsive Layout** - Optimal untuk desktop, tablet, dan mobile
+- **Smooth Animations** - Animasi halus dengan Animate.css
+- **Card-based UI** - Interface modern dengan card components
+- **Interactive Elements** - Hover effects dan transitions
+
+## 🔐 Keamanan
+
+- Password hashing dengan bcrypt
+- SQL Injection protection (Prepared Statements)
+- XSS Protection (htmlspecialchars)
+- CSRF Token protection
+- File upload validation
+- Session security
+
+## 📊 Kategori Aduan
+
+1. Lingkungan Hidup
+2. Perumahan
+3. Kawasan Permukiman
+4. Pertanahan
+5. Drainase & Sanitasi
+6. Jalan & Jembatan
+7. Lainnya
+
+## 🔄 Status Aduan
+
+- **Pending** - Aduan baru, menunggu verifikasi
+- **Proses** - Sedang ditindaklanjuti
+- **Selesai** - Aduan telah diselesaikan
+- **Ditolak** - Aduan tidak dapat diproses
+
+## 📞 Kontak & Support
+
+**DLHPKKP Kabupaten Tojo Una-Una**
+- Alamat: Jl. Poros Ampana, Kabupaten Tojo Una-Una
+- Email: info@dlhpkkp-tojounauna.go.id
+- Telepon: (0458) 123456
+
+## 📝 License
+
+© 2024 DLHPKKP Kabupaten Tojo Una-Una
+
+---
+
+**Developed with ❤️ for Tojo Una-Una**
